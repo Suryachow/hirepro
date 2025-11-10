@@ -83,6 +83,16 @@ class PerplexityService {
     }
   }
 
+  // Small helper: instruction to ask the model to format responses as short, beautiful lines
+  private getFormatInstruction(): string {
+    return `\n\nPlease format the response as a short, attractive set of lines for display to users:\n` +
+      `- Start with a one-line title or summary (prefixed with ✨).\n` +
+      `- Then provide concise points (2-8), each on its own line.\n` +
+      `- Use short, clear sentences. Prefer bullets or numbered lines.\n` +
+      `- Keep each line to one or two short phrases; avoid long paragraphs.\n` +
+      `- Use friendly tone and optionally an emoji for emphasis.`;
+  }
+
   // Interview Preparation - Get AI feedback on answers
   async getInterviewFeedback(question: string, userAnswer: string): Promise<string> {
     const messages: PerplexityMessage[] = [
@@ -92,7 +102,7 @@ class PerplexityService {
       },
       {
         role: 'user',
-        content: `Question: ${question}\n\nCandidate's Answer: ${userAnswer}\n\nProvide detailed feedback on this answer including: strengths, areas for improvement, and suggestions for a better response.`,
+        content: `Question: ${question}\n\nCandidate's Answer: ${userAnswer}\n\nProvide detailed feedback on this answer including: strengths, areas for improvement, and suggestions for a better response.` + this.getFormatInstruction(),
       },
     ];
 
@@ -108,7 +118,7 @@ class PerplexityService {
       },
       {
         role: 'user',
-        content: `Coding Problem: ${problem}\n\nProvide a clear explanation with: problem understanding, approach, algorithm, and code example.`,
+        content: `Coding Problem: ${problem}\n\nProvide a clear explanation with: problem understanding, approach, algorithm, and code example.` + this.getFormatInstruction(),
       },
     ];
 
@@ -124,7 +134,7 @@ class PerplexityService {
       },
       {
         role: 'user',
-        content: `Student Profile: ${studentProfile}\n\nJob Description: ${jobDescription}\n\nProvide: match percentage, key skill gaps, preparation suggestions, and likelihood of success.`,
+        content: `Student Profile: ${studentProfile}\n\nJob Description: ${jobDescription}\n\nProvide: match percentage, key skill gaps, preparation suggestions, and likelihood of success.` + this.getFormatInstruction(),
       },
     ];
 
@@ -140,7 +150,7 @@ class PerplexityService {
       },
       {
         role: 'user',
-        content: `Resume Content:\n${resumeContent}\n\nTarget Job: ${jobTitle}\n\nProvide feedback on: relevance, formatting, impact of achievements, and specific improvements needed.`,
+        content: `Resume Content:\n${resumeContent}\n\nTarget Job: ${jobTitle}\n\nProvide feedback on: relevance, formatting, impact of achievements, and specific improvements needed.` + this.getFormatInstruction(),
       },
     ];
 
@@ -156,7 +166,7 @@ class PerplexityService {
       },
       {
         role: 'user',
-        content: `Generate ${count} realistic interview questions for the position of ${jobTitle} at ${company}. Include technical, behavioral, and situational questions appropriate for this role.`,
+        content: `Generate ${count} realistic interview questions for the position of ${jobTitle} at ${company}. Include technical, behavioral, and situational questions appropriate for this role.` + this.getFormatInstruction(),
       },
     ];
 
@@ -172,7 +182,7 @@ class PerplexityService {
       },
       {
         role: 'user',
-        content: `Current Skills: ${skills.join(', ')}\n\nTarget Role: ${targetRole}\n\nAnalyze skill fit and suggest: priority skills to learn, learning resources, timeline, and career progression path.`,
+        content: `Current Skills: ${skills.join(', ')}\n\nTarget Role: ${targetRole}\n\nAnalyze skill fit and suggest: priority skills to learn, learning resources, timeline, and career progression path.` + this.getFormatInstruction(),
       },
     ];
 
@@ -183,12 +193,12 @@ class PerplexityService {
   async askQuestion(question: string, context?: string): Promise<string> {
     const messages: PerplexityMessage[] = [
       {
-        role: 'system',
-        content: context || 'You are a helpful AI assistant for career and technical guidance.',
+      role: 'system',
+      content: context || 'You are a helpful AI assistant for career and technical guidance.',
       },
       {
-        role: 'user',
-        content: question,
+      role: 'user',
+      content: question + this.getFormatInstruction(),
       },
     ];
 

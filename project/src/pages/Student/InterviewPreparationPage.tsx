@@ -20,6 +20,7 @@ import {
   Loader
 } from 'lucide-react';
 import { useAI } from '../../contexts/AIContext';
+import parseFormattedResponse from '../../utils/aiFormatter';
 
 interface InterviewQuestion {
   id: string;
@@ -422,12 +423,25 @@ const InterviewPreparationPage: React.FC = () => {
             </div>
           )}
 
-          {showAIFeedback && aiFeedback && (
-            <div className="mt-4 bg-purple-50 border border-purple-200 rounded-lg p-4">
-              <h4 className="font-semibold text-purple-900 mb-2">✨ AI Feedback:</h4>
-              <p className="text-purple-800 text-sm whitespace-pre-wrap">{aiFeedback}</p>
-            </div>
-          )}
+          {showAIFeedback && aiFeedback && (() => {
+            const parsed = parseFormattedResponse(aiFeedback);
+            return (
+              <div className="mt-4 bg-purple-50 border border-purple-200 rounded-lg p-4">
+                {parsed.title && <h4 className="font-semibold text-purple-900 mb-2">✨ {parsed.title}</h4>}
+                <div className="text-purple-800 text-sm whitespace-pre-wrap">
+                  {parsed.points.length > 0 ? (
+                    <ul className="list-disc list-inside space-y-1">
+                      {parsed.points.map((p, idx) => (
+                        <li key={idx}>{p}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p>{parsed.raw}</p>
+                  )}
+                </div>
+              </div>
+            );
+          })()}
         </div>
       </div>
     );

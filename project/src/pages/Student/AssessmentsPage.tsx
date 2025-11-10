@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ClipboardList, Clock, CheckCircle, XCircle, AlertTriangle, Play, Eye, Calendar, Timer, Lightbulb, Loader } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useAI } from '../../contexts/AIContext';
+import parseFormattedResponse from '../../utils/aiFormatter';
 import { applicationService } from '../../services/applicationService';
 
 interface Assessment {
@@ -246,12 +247,25 @@ const AssessmentsPage: React.FC = () => {
                   <strong>Score:</strong> {selectedAssessment.score}/{selectedAssessment.maxScore}
                 </div>
               )}
-              {showAIExplanation && aiExplanation && (
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                  <h4 className="font-semibold text-blue-900 mb-2">💡 AI Explanation:</h4>
-                  <p className="text-blue-800 text-sm whitespace-pre-wrap">{aiExplanation}</p>
-                </div>
-              )}
+              {showAIExplanation && aiExplanation && (() => {
+                const parsed = parseFormattedResponse(aiExplanation);
+                return (
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    {parsed.title && <h4 className="font-semibold text-blue-900 mb-2">💡 {parsed.title}</h4>}
+                    <div className="text-blue-800 text-sm whitespace-pre-wrap">
+                      {parsed.points.length > 0 ? (
+                        <ul className="list-disc list-inside space-y-1">
+                          {parsed.points.map((p, idx) => (
+                            <li key={idx}>{p}</li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <p>{parsed.raw}</p>
+                      )}
+                    </div>
+                  </div>
+                );
+              })()}
             </div>
             <div className="flex justify-between space-x-3 mt-6">
               <button

@@ -87,14 +87,31 @@ const Dashboard: React.FC = () => {
 const AppContent: React.FC = () => {
   const { user } = useAuth();
   const [isAIChatOpen, setIsAIChatOpen] = useState(false);
+  // Compute Router basename so routing works when the app is served from a sub-path (e.g. /hirepro/)
+  // Priority: detect runtime path (useful during local dev when opening /hirepro/) then fall back to Vite BASE_URL
+  const computeBasename = () => {
+    const base = import.meta.env.BASE_URL || '/';
+    if (typeof window !== 'undefined') {
+      // if the app is loaded under /hirepro or similar subpath, return that as basename
+      if (window.location.pathname.startsWith('/hirepro')) return '/hirepro';
+      // also support a trailing slash variant
+      if (window.location.pathname.startsWith('/hirepro/')) return '/hirepro';
+    }
+    return base;
+  };
 
   return (
     <>
-      <Router>
+      <Router basename={computeBasename()}>
         <Routes>
         <Route
-          path="/student-login"
+          path="/login"
           element={user ? <Navigate to="/dashboard" replace /> : <StudentLoginForm />}
+        />
+        {/* compatibility: old route -> redirect to unified /login */}
+        <Route
+          path="/student-login"
+          element={<Navigate to="/login" replace />}
         />
         <Route
           path="/admin-login"
@@ -244,7 +261,7 @@ const AppContent: React.FC = () => {
         />
         <Route
           path="/"
-          element={user ? <Navigate to="/dashboard" replace /> : <Navigate to="/student-login" replace />}
+          element={user ? <Navigate to="/dashboard" replace /> : <Navigate to="/login" replace />}
         />
       </Routes>
     </Router>

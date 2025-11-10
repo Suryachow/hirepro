@@ -3,6 +3,7 @@ import { Briefcase, MapPin, Clock, DollarSign, TrendingUp, FileText, Send, Zap, 
 import { useAuth } from '../../contexts/AuthContext';
 import { useJobs } from '../../contexts/JobsContext';
 import { useAI } from '../../contexts/AIContext';
+import parseFormattedResponse from '../../utils/aiFormatter';
 
 const JobsPage: React.FC = () => {
   const { user } = useAuth();
@@ -364,59 +365,130 @@ const JobsPage: React.FC = () => {
               </div>
 
               {/* AI Match Result */}
-              {showAiMatch && aiMatch && (
-                <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                  <h3 className="font-semibold text-gray-900 flex items-center gap-2 mb-2">
-                    <Zap className="w-4 h-4 text-purple-600" />
-                    AI Job Match Analysis
-                  </h3>
-                  <p className="text-gray-700 text-sm">{aiMatch}</p>
-                </div>
-              )}
+              {/* AI Match Result */}
+              {showAiMatch && aiMatch && (() => {
+                const parsed = parseFormattedResponse(aiMatch);
+                return (
+                  <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                    <h3 className="font-semibold text-gray-900 flex items-center gap-2 mb-2">
+                      <Zap className="w-4 h-4 text-purple-600" />
+                      AI Job Match Analysis
+                    </h3>
+                    {parsed.title && <h4 className="font-semibold text-gray-800 mb-1">{parsed.title}</h4>}
+                    <div className="text-gray-700 text-sm">
+                      {parsed.points.length > 0 ? (
+                        <ul className="list-disc list-inside space-y-1">
+                          {parsed.points.map((p, idx) => (
+                            <li key={idx}>{p}</li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <p>{parsed.raw}</p>
+                      )}
+                    </div>
+                  </div>
+                );
+              })()}
 
               {/* Resume Tips Result */}
-              {showResumeTips && resumeTips && (
-                <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
-                  <h3 className="font-semibold text-gray-900 flex items-center gap-2 mb-2">
-                    <FileText className="w-4 h-4 text-green-600" />
-                    Resume Optimization Tips
-                  </h3>
-                  <p className="text-gray-700 text-sm whitespace-pre-wrap">{resumeTips}</p>
-                </div>
-              )}
+              {showResumeTips && resumeTips && (() => {
+                const parsed = parseFormattedResponse(resumeTips);
+                return (
+                  <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+                    <h3 className="font-semibold text-gray-900 flex items-center gap-2 mb-2">
+                      <FileText className="w-4 h-4 text-green-600" />
+                      Resume Optimization Tips
+                    </h3>
+                    <div className="text-gray-700 text-sm whitespace-pre-wrap">
+                      {parsed.title && <h4 className="font-semibold text-gray-800 mb-1">{parsed.title}</h4>}
+                      {parsed.points.length > 0 ? (
+                        <ul className="list-disc list-inside space-y-1">
+                          {parsed.points.map((p, idx) => (
+                            <li key={idx}>{p}</li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <p>{parsed.raw}</p>
+                      )}
+                    </div>
+                  </div>
+                );
+              })()}
 
               {/* Interview Questions Result */}
-              {showInterviewQuestions && interviewQuestions && (
-                <div className="mt-4 p-4 bg-indigo-50 border border-indigo-200 rounded-lg">
-                  <h3 className="font-semibold text-gray-900 flex items-center gap-2 mb-2">
-                    <BookOpen className="w-4 h-4 text-indigo-600" />
-                    Likely Interview Questions
-                  </h3>
-                  <p className="text-gray-700 text-sm whitespace-pre-wrap">{interviewQuestions}</p>
-                </div>
-              )}
+              {showInterviewQuestions && interviewQuestions && (() => {
+                const parsed = parseFormattedResponse(interviewQuestions);
+                return (
+                  <div className="mt-4 p-4 bg-indigo-50 border border-indigo-200 rounded-lg">
+                    <h3 className="font-semibold text-gray-900 flex items-center gap-2 mb-2">
+                      <BookOpen className="w-4 h-4 text-indigo-600" />
+                      Likely Interview Questions
+                    </h3>
+                    <div className="text-gray-700 text-sm whitespace-pre-wrap">
+                      {parsed.title && <h4 className="font-semibold text-gray-800 mb-1">{parsed.title}</h4>}
+                      {parsed.points.length > 0 ? (
+                        <ol className="list-decimal list-inside space-y-1">
+                          {parsed.points.map((p, idx) => (
+                            <li key={idx}>{p}</li>
+                          ))}
+                        </ol>
+                      ) : (
+                        <p>{parsed.raw}</p>
+                      )}
+                    </div>
+                  </div>
+                );
+              })()}
 
               {/* Salary Tips Result */}
-              {showSalaryTips && salaryTips && (
-                <div className="mt-4 p-4 bg-amber-50 border border-amber-200 rounded-lg">
-                  <h3 className="font-semibold text-gray-900 flex items-center gap-2 mb-2">
-                    <DollarSign className="w-4 h-4 text-amber-600" />
-                    Salary Negotiation Guide
-                  </h3>
-                  <p className="text-gray-700 text-sm whitespace-pre-wrap">{salaryTips}</p>
-                </div>
-              )}
+              {showSalaryTips && salaryTips && (() => {
+                const parsed = parseFormattedResponse(salaryTips);
+                return (
+                  <div className="mt-4 p-4 bg-amber-50 border border-amber-200 rounded-lg">
+                    <h3 className="font-semibold text-gray-900 flex items-center gap-2 mb-2">
+                      <DollarSign className="w-4 h-4 text-amber-600" />
+                      Salary Negotiation Guide
+                    </h3>
+                    <div className="text-gray-700 text-sm whitespace-pre-wrap">
+                      {parsed.title && <h4 className="font-semibold text-gray-800 mb-1">{parsed.title}</h4>}
+                      {parsed.points.length > 0 ? (
+                        <ul className="list-disc list-inside space-y-1">
+                          {parsed.points.map((p, idx) => (
+                            <li key={idx}>{p}</li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <p>{parsed.raw}</p>
+                      )}
+                    </div>
+                  </div>
+                );
+              })()}
 
               {/* Company Culture Result */}
-              {showCompanyCulture && companyCulture && (
-                <div className="mt-4 p-4 bg-rose-50 border border-rose-200 rounded-lg">
-                  <h3 className="font-semibold text-gray-900 flex items-center gap-2 mb-2">
-                    <Users className="w-4 h-4 text-rose-600" />
-                    Company Culture & Fit Analysis
-                  </h3>
-                  <p className="text-gray-700 text-sm whitespace-pre-wrap">{companyCulture}</p>
-                </div>
-              )}
+              {showCompanyCulture && companyCulture && (() => {
+                const parsed = parseFormattedResponse(companyCulture);
+                return (
+                  <div className="mt-4 p-4 bg-rose-50 border border-rose-200 rounded-lg">
+                    <h3 className="font-semibold text-gray-900 flex items-center gap-2 mb-2">
+                      <Users className="w-4 h-4 text-rose-600" />
+                      Company Culture & Fit Analysis
+                    </h3>
+                    <div className="text-gray-700 text-sm whitespace-pre-wrap">
+                      {parsed.title && <h4 className="font-semibold text-gray-800 mb-1">{parsed.title}</h4>}
+                      {parsed.points.length > 0 ? (
+                        <ul className="list-disc list-inside space-y-1">
+                          {parsed.points.map((p, idx) => (
+                            <li key={idx}>{p}</li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <p>{parsed.raw}</p>
+                      )}
+                    </div>
+                  </div>
+                );
+              })()}
             </div>
           ))
         )}
