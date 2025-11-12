@@ -1,0 +1,18 @@
+{
+  "name": "hirepro-monorepo",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "postinstall": "npm install --prefix project",
+    "build": "npm run build --prefix project",
+    "dev": "npm run dev --prefix project",
+    "start": "npm run preview --prefix project",
+    "vercel-build": "npm run build"
+  },
+  "engines": {
+    "node": "18.x"
+  },
+  "devDependencies": {
+    "gh-pages": "^6.3.0"
+  }
+}

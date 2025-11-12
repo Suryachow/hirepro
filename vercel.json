@@ -1,0 +1,18 @@
+{
+  "version": 2,
+  "installCommand": "npm install --prefix project",
+  "buildCommand": "npm run build --prefix project",
+  "builds": [
+    {
+      "src": "project/package.json",
+      "use": "@vercel/static-build",
+      "config": { "distDir": "dist" }
+    }
+  ],
+  "routes": [
+    { "src": "/(.*)", "dest": "/index.html" }
+  ],
+  "env": {
+    "VITE_API_URL": "@vite_api_url"
+  }
+}
